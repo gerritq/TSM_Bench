@@ -1,0 +1,1 @@
+Given the first few words of the review, continue the review with a minimum of 20 words. Review beginning: "{beginning}"

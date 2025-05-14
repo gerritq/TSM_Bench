@@ -1,0 +1,1 @@
+Viết một bài báo với tiêu đề "{title}".

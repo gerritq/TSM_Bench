@@ -1,0 +1,1 @@
+Escreva uma notícia com o título "{title}".

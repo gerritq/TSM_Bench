@@ -1,0 +1,1 @@
+Viết một bài viết Wikipedia với tiêu đề "{title}". Bài viết phải có ít nhất 250 từ.

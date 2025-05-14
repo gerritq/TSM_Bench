@@ -1,0 +1,1 @@
+Write a Wikipedia article with the title "{title}", the article should at least have 250 words.

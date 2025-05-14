@@ -1,0 +1,1 @@
+Escreva um artigo da Wikipédia com o título "{title}". O artigo deve ter pelo menos 250 palavras.
