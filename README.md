@@ -1,18 +1,35 @@
-# WETBench: A Benchmark for Detecting Context-Conditioned Machine-Generated Text across Common Editing Tasks on Wikipedia
+# TSM-Bench: Detecting LLM-Generated Text in Real-World Wikipedia Editing Practices
 
-This repository contains the official implementation of **WETBench: A Benchmark for Detecting Context-Conditioned Machine-Generated Text across Common Editing Tasks on Wikipedia**.
+
+This repository contains the official implementation of **TSM-Bench: Detecting LLM-Generated Text in Real-World Wikipedia Editing Practices**.
 
 <!-- Add link: [Paper Title]() -->
 
 ---
 
-## Abstract
+## TSM-Bench
 
-Detecting machine-generated text (MGT) on user-generated content (UGC) platforms is critical due to the persistent limitations of large language models (LLMs).
-Users increasingly leverage LLMs for editing tasks that require *context-conditioned* generation. However, existing MGT detection benchmarks overwhelmingly focus on simple *instruction-only* generation tasks, leaving real-world detection performance on UGC platforms such as Wikipedia largely unexplored.
-In this work, we show that most trained state-of-the-art detectors struggle to detect context-conditioned MGT. 
-We introduce **WETBench**, a multilingual, multi-generator, and multi-task benchmark that reflects common Wikipedia editing scenarios, where generation is guided by detailed context. Our evaluations reveal that (i) detector accuracy drops by 5–18% compared to prior benchmarks, and (ii) a generalization asymmetry emerges: fine-tuning on context-conditioned MGT supports transfer to instruction-only MGT—even across domains—but not vice versa.
-We attribute this asymmetry to overfitting: detectors trained solely on instruction-only MGT learn to exploit superficial artifacts, failing to generalize to more complex, context-driven generations. These findings suggest that prior benchmarks overestimate real-world detection performance. More broadly, our results indicate that reliable MGT detection—essential for safeguarding the integrity of UGC platforms—may already be approaching the limits of current detection methods.
+![Overview of our TSM-Bench](assets/overview.png)
+
+Automatically detecting machine-generated text (MGT) is critical to maintain-
+ing the knowledge integrity of user-generated content (UGC) platforms such as
+Wikipedia. Existing detection benchmarks primarily focus on generic text gen-
+eration tasks (e.g., “Write an article about machine learning.”). However, editors
+frequently employ LLMs for specific writing tasks (e.g., summarisation). These
+task-specific MGT instances tend to resemble human-written text more closely
+due to their constrained task formulation and contextual conditioning. In this
+work, we show that a range of MGT detectors struggle to identify task-specific
+MGT reflecting real-world editing on Wikipedia. We introduce TSM-BENCH, a
+multilingual, multi-generator, and multi-task benchmark for evaluating MGT de-
+tectors on common, real-world Wikipedia editing tasks. Our findings demonstrate
+that (i) average detection accuracy drops by 10–40% compared to prior bench-
+marks, and (ii) a generalisation asymmetry exists: fine-tuning on task-specific
+data enables generalisation to generic data—even across domains—but not vice
+versa. We demonstrate that models fine-tuned exclusively on generic MGT overfit
+to superficial artefacts of machine generation. Our results suggest that, in contrast
+to prior benchmarks, most detectors remain unreliable for automated detection in
+real-world contexts such as UGC platforms. TSM-BENCH therefore provides a
+crucial foundation for developing and evaluating future models.
 
 ---
 
@@ -21,13 +38,13 @@ We attribute this asymmetry to overfitting: detectors trained solely on instruct
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/gerritq/WETBench
-cd WETBench
+git clone tbd
+cd TSM-Bench
 ```
 
 ### 2. Download Pretrained Models
 
-We host the pre-trained models for Experiment 2 (generalisation) on Google Drive. You can also run the models yourself using the script `generalise/code/train_hp_g.sh`.  
+We host the pre-trained models for Experiment 4 (generalisation) on Google Drive. You can also run the models yourself using the script `generalise/code/train_hp_g.sh`.  
 The following script will download and unzip the models into `generalise/code/hp_len`.  
 The download is ~18GB, unzipped size is ~25GB.
 
@@ -60,15 +77,13 @@ export HF_HOME="" # optimal to manage hf cache
 ## Main Results
 
 **Note:**  
-- Experiment 1 was run on either a single **NVIDIA A100 80GB** or two **NVIDIA A100 40GB** GPUs.  
-- Experiment 2 was run on a single **NVIDIA A100 80GB**.  
+- Experiments 1-2 were run on either a single **NVIDIA A100 80GB** or two **NVIDIA A100 40GB** GPUs. ÷
+- Experiments 3-5 were run on a single **NVIDIA A100 40GB**.  
 - We strongly recommend using GPUs to replicate results.
 
-### Experiment 1: Detector Performance on Context-Conditioned MGT
+### Experiment 1: Off-the shelf detectos
 
-#### SOTA Off-the-Shelf Detectors
-
-![Figure 3: SOTA Off-the-Shelf Detector Performance](assets/figure_3.png)
+![Figure 3: SOTA Off-the-Shelf Detector Performance](assets/ots.png)
 
 Run the following script to reproduce the results:
 
@@ -76,9 +91,9 @@ Run the following script to reproduce the results:
 bash run_ots.sh
 ```
 
-#### Trained Detectors by Task–Language–Detector Combination
+### Experiment 2: Supervised and zero-shot detectors
 
-![Table 2: Within-task Detection (ACC = accuracy, F1 = F1-score)](assets/table_2.png)
+![Table 1: Within-task Detection (ACC = accuracy, F1 = F1-score)](assets/table2.png)
 
 To run black-box detectors, provide your OpenAI API key. If you skip this, only local models will be evaluated.
 
@@ -93,15 +108,25 @@ bash detect_train_hp.sh
 To run all:
 
 ```bash
-export OPENAI_API_KEY=sk-... # Optional
+export OPENAI_API_KEY=sk-...
 bash run_detection.sh
 ```
 
 ---
 
-### Experiment 2: Generalisation
+### Experiment 3: Feature analysis
 
-![Confusion Matrix for GPT-4o mini](assets/cm_gpt.png)
+![SHAP Values for mDeBERTa trained on task-specific vs generic data](assets/shap_max.png)
+
+To generate the SHAP plot run:
+
+```bash
+bash run_shap_vals.sh
+```
+
+### Experiment 4: Out-of-domain generalisation
+
+![OOD with mDeberta and GPT4o across domains.](assets/cm_ood_gpt4o.png)
 
 This will populate `generalise/data/detect` with files named:
 `trainFile_2_testFile_model_language.jsonl`
@@ -112,23 +137,30 @@ bash run_generalisation.sh
 
 ---
 
-### Experiment 2: SHAP Value Analysis
+### Experiment 5: Cross-task generalisation
 
-![SHAP Values for mDeBERTa trained on task-specific (our) vs topic-to-text data](assets/shap_vals.png)
+![Cross-task generalisation with mDeberta and GPT4o across domains.](assets/cm_ct_gpt4o.png)
 
-To generate the SHAP plot `assets/shap_vals.pdf`:
+This will populate `generalise/data/detect` with files named:
+`trainFile_2_testFile_model_language.jsonl`
 
 ```bash
-bash run_shap_vals.sh
+bash tbd shortly!
 ```
 
 ---
 
 ## Other Results
 
+### Linguistic Analysis
+
+![comparison of linguistic features .](assets/la_en.png)
+
+Run the files in `linguistic_analysis/la.sh` with a GPU.
+
 ### Prompt Selection
 
-![Prompt Evaluation (values in parentheses show pp improvement over baseline prompts)](assets/table_1.png)
+![Prompt Evaluation (values in parentheses show pp improvement over baseline prompts)](assets/table1.png)
 
 You can run this without `QAFactEval` if it causes issues.
 
@@ -159,84 +191,6 @@ This example runs the evaluation for Vietnamese. Adjust the language as needed.
 
 ```bash
 bash run_prompt_eval.sh
-```
-
----
-
-## Data Collection
-
-We provide all data (WikiPS, mWNC, and MGTs) via [Hugging Face](https://huggingface.co/datasets/cs928346/WETBench).
-
-Below is how to reproduce our datasets.
-
----
-
-### WikiParas
-
-To reproduce our paragraph and summary data:
-
-1. Download the latest Wikimedia dumps. Replace `${lang}` with one of `[en, pt, vi]`.
-
-> **Note:** English dump is >660GB.
-
-```bash
-mkdir -p data
-wget -P data https://dumps.wikimedia.org/enwiki/20190120/${lang}wiki-latest-stub-meta-history.xml.gz  
-gunzip data/${lang}wiki-latest-stub-meta-history.xml.gz
-```
-
-2. a) Get the latest articles  
-   b) Query the MediaWiki API for HTML  
-   c) Extract the base sample
-
-If using languages beyond ours, adapt the `parse_infobox` and similar functions.
-
-```bash
-bash collection/1_get_latest_articles.sh
-bash collection/2_query.sh
-bash collection/3_get_text.sh
-```
-
-This creates `3_${lang}_text.jsonl`, the base file for the following:
-
-```bash
-bash paragraphs/data/gen_paras.sh
-bash summaries/data/gen_sums.sh
-```
-
-The generated datasets are stored in `paragraphs/data/` and `summaries/data/`.
-
----
-
-### mWNC
-
-To extend mWNC (following Pryzant et al. 2020):
-
-> **Note:** Requires the Wikimedia dumps from above.
-
-1. Get all NPOV-related revisions.
-
-```bash
-bash tst/data/1_get_nrevs.sh
-```
-
-2. Crawl diffs (recommended: use HPC array jobs to parallelise).
-
-```bash
-bash tst/data/2_get_crawl.sh
-```
-
-3. Process the data.
-
-```bash
-bash tst/data/3_process.sh
-```
-
-4. Generate sentence-level datasets for all languages, and paragraph-level for English:
-
-```bash
-bash tst/data/4_gends.sh
-bash tst/data/5_get_paras.sh
 ```
 
 ---
