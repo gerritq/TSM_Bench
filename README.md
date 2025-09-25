@@ -5,6 +5,8 @@ This repository contains the official implementation of **TSM-Bench: Detecting L
 
 <!-- Add link: [Paper Title]() -->
 
+🚧 Note: To ensure anonymity, we will release the data on Hugging Face after the review process.
+
 ---
 
 ## TSM-Bench
@@ -116,7 +118,7 @@ bash run_detection.sh
 
 ### Experiment 3: Out-of-domain generalisation
 
-![OOD with mDeberta and GPT4o across domains.](assets/cm_ood_gpt4o.png)
+![OOD with mDeberta and GPT4o across domains.](assets/cm_cd_gpt4o.png)
 
 This will populate `generalise/data/detect` with files named:
 `trainFile_2_testFile_model_language.jsonl`
