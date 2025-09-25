@@ -11,7 +11,7 @@ This repository contains the official implementation of **TSM-Bench: Detecting L
 
 ![Overview of our TSM-Bench](assets/overview.png)
 
-Automatically detecting machine-generated text (MGT) is critical to maintain-
+> Automatically detecting machine-generated text (MGT) is critical to maintain-
 ing the knowledge integrity of user-generated content (UGC) platforms such as
 Wikipedia. Existing detection benchmarks primarily focus on generic text gen-
 eration tasks (e.g., “Write an article about machine learning.”). However, editors
@@ -114,17 +114,7 @@ bash run_detection.sh
 
 ---
 
-### Experiment 3: Feature analysis
-
-![SHAP Values for mDeBERTa trained on task-specific vs generic data](assets/shap_max.png)
-
-To generate the SHAP plot run:
-
-```bash
-bash run_shap_vals.sh
-```
-
-### Experiment 4: Out-of-domain generalisation
+### Experiment 3: Out-of-domain generalisation
 
 ![OOD with mDeberta and GPT4o across domains.](assets/cm_ood_gpt4o.png)
 
@@ -136,6 +126,16 @@ bash run_generalisation.sh
 ```
 
 ---
+
+### Experiment 4: Feature analysis
+
+![SHAP Values for mDeBERTa trained on task-specific vs generic data](assets/shap_max.png)
+
+To generate the SHAP plot run:
+
+```bash
+bash run_shap_vals.sh
+```
 
 ### Experiment 5: Cross-task generalisation
 
